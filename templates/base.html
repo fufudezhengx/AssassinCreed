@@ -1,3 +1,74 @@
 {% extends "bootstrap/base.html" %}
 
 {% block title %}Flasky{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle"
+              data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/">
+                <img class="center-block img-responsive" width="60" src="/static/favicon.jpg">
+            </a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Version
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Assassin's Creed</a></li>
+                    <li><a href="#">Assassin's Creed II</a></li>
+                    <li><a href="#">Assassin's Creed: Brotherhood</a></li>
+                    <li><a href="#">Assassin's Creed: Revelations</a></li>
+                    <li><a href="#">Assassin's Creed III</a></li>
+                    <li><a href="#">Assassin's Creed IV: Black Flag</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Assassin
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-header">Branch</li>
+                    <li><a href="#">China</a></li>
+                    <li><a href="#">Italy</a></li>
+                    <li><a href="#">American</a></li>
+                    <li class="divider"></li>
+                    <li class="dropdown-header">Family</li>
+                    <li><a href="#">Auditore</a></li>
+                    <li><a href="#">Canvey</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Location
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Ocean</a></li>
+                    <li><a href="#">Constantinople</a></li>
+                    <li><a href="#">Venice</a></li>
+                </ul>
+            <li><a href="/">World</a></li>
+            <form class="navbar-form">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Keyword">
+                </div>
+                <button type="submit" class="btn btn-default">Search</button>
+            </form>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% block page_content %}
+        {% endblock %}
+    </div>
+{% endblock %}
