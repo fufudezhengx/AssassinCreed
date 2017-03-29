@@ -23,7 +23,7 @@ bootstrap = Bootstrap(app)
 moment = Moment(app)
 
 app.config['SECRET_KEY'] = 'ASDF'
-app.config['SQLALCHEMY_DATABASE_URL'] = \
+app.config['SQLALCHEMY_DATABASE_URI'] = \
     'sqlite:///' + os.path.join(basedir,'data.sqlite')
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=True
