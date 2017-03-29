@@ -10,7 +10,7 @@ type="image/x-icon">
 type="image/x-icon">
 <style>
     body {
-        background-image:url('/static/background.jpg');
+        background-image:url('/static/background1.jpg');
         background-repeat:no-repeat;
         background-attachment:fixed;
     }
@@ -86,4 +86,9 @@ type="image/x-icon">
         {% block page_content %}
         {% endblock %}
     </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
 {% endblock %}
