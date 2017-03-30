@@ -4,6 +4,7 @@ from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate,MigrateCommand
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -21,6 +22,10 @@ app = Flask(__name__)
 manager = Manager(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+db = SQLAlchemy(app)
+
+migrate = Migrate(app,db)
+manager.add_command('db',MigrateCommand)
 
 app.config['SECRET_KEY'] = 'ASDF'
 app.config['SQLALCHEMY_DATABASE_URI'] = \
@@ -28,7 +33,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = \
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=True
  
-db = SQLAlchemy(app)
+
 
 class Role(db.Model):
     __tablename__ = 'roles'
