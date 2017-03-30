@@ -7,13 +7,12 @@
     <div>
        
         <div class="page-hear">
-            <h1>Hello,
-                    {% if name %}
-                        {{ name }}
-                    {% else %}
-                        Strange
-                    {% endif %}
-                    !</h1>
+            <h1>Hello, {% if name %}{{ name }}{% else %}Strange{% endif %}!</h1>
+            {% if not know %}
+            <p>Please to meet you!</p>
+            {% else %}
+            <p>Happy to see you again!</P>
+            {% endif %}
             <h2>Welcome to play Assassin Creed</h2>
         </div>
         {{ wtf.quick_form(form) }}
