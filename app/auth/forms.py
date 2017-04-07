@@ -36,3 +36,17 @@ class ChangePasswordForm(FlaskForm):
     new_password2 = PasswordField('Confirm password',validators=[Required()])
 
     submit = SubmitField('Change Password')
+ 
+class RequestResetPasswordForm(FlaskForm):
+    email = StringField('Email',validators=[Required(),Length(1,64),Email()])
+    submit = SubmitField('Reset')
+    
+class ResetPasswordForm(FlaskForm):
+    email = StringField('Email',validators=[Required(),Length(1,64),Email()])
+    password = PasswordField('Password',validators=[Required(),EqualTo('password2',message='Password must match')])
+    password2 = PasswordField('Confirm password',validators=[Required()])
+    submit = SubmitField('Reset')
+    
+    def validate_email(self,field):
+        if User.query.filter_by(email=field.data).first() is None:
+            raise ValidationError('Unregistered email address!')
