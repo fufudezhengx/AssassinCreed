@@ -7,8 +7,9 @@ from flask_migrate import Migrate, MigrateCommand
 
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+migrate = Migrate(app,db)
 manager = Manager(app)
-migrate = Migrate(app)
+
 
 def make_shell_context():
     return dict(app=app,db=db,User=User,Role=Role)
