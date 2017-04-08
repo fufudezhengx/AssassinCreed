@@ -50,3 +50,12 @@ class ResetPasswordForm(FlaskForm):
     def validate_email(self,field):
         if User.query.filter_by(email=field.data).first() is None:
             raise ValidationError('Unregistered email address!')
+            
+class RequestChangEmailForm(FlaskForm):
+    email = StringField('New Email Address',validators=[Required(),Length(1,64),Email()])
+    password = PasswordField('password',validators=[Required()])
+    submit = SubmitField('Change')
+    
+    def validate_email(self,field):
+        if User.query.filter_by(email=field.data).first() is not None:
+            raise ValidationError('Registered email address!')

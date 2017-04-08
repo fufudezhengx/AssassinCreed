@@ -57,4 +57,12 @@ class UserModelTestCase(unittest.TestCase):
         token = u.generate_confirmation_token(1)
         time.sleep(2)
         self.assertFalse(u.confirm(token))
-        
+      
+    def test_valid_new_email_confirmation_token(self):
+        new_email = 'jack@as.com'
+        u = User(email='olive@as.com')
+        db.session.add(u)
+        db.session.commit()
+        token = u.generate_new_email_confirmation_token(new_email)
+        u.confirm_new_email(token)
+        self.assertTrue(u.email == new_email)

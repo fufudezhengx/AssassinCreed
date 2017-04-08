@@ -81,9 +81,10 @@ type="image/x-icon">
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_authenticated %}
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Account<b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{current_user.username}} Account<b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a href="{{ url_for('auth.change_password') }}">Change Password</a></li>
+                            <li><a href="{{ url_for('auth.request_change_email') }}">Change Email</a></li>
                             <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
                         </ul>
                     </li>
