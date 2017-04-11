@@ -5,6 +5,7 @@ from . import login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from . import config
+import datetime
 
 class Permission:
     FOLLOW = 0x01
@@ -60,6 +61,16 @@ class User(db.Model,UserMixin):
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean,default=False)
     
+    name = db.Column(db.String(64))
+    location = db.Column(db.String(64))
+    about_me = db.Column(db.Text())
+    member_since = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    last_seen = db.Column(db.DateTime(),default=datetime.datetime.utcnow)
+
+    def ping(self):
+        self.last_seen = datetime.datetime.utcnow()
+        db.session.add(self)
+
     def __init__(self,**kwargs):
         super(User,self).__init__(**kwargs)
         if self.role is None:

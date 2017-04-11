@@ -31,4 +31,12 @@ def index():
 @admin_required
 def for_admin_only():
     return "For administrators!"
+
+@main.route('/user/<username>')
+@login_required
+def user_page(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        abort(404)
+    return render_template('user_page.html',user=user)
     
