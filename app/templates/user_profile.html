@@ -1,11 +1,14 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}User - Assassin Creed{% endblock %}
+{% block title %}User Profile - Assassin Creed{% endblock %}
     
 {% block page_content %}
 <div class="page-header">
-    <h1>{{ user.username }}</h1>
+    
+    <h1><img class="img-circle" src="{{user.avatar}}" width="50px" height="50px">
+        {{ user.username }}
+    </h1>
     {% if user.name or user.location %}
     <p>
         {% if user.name %}{{ user.name}}{% endif %}
@@ -19,9 +22,18 @@
         <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
     {% endif %}
     {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+    {% if current_user == user %}
+        <a class="btn btn-default" href="{{url_for('main.edit_profile')}}">Edit</a>
+    {% endif %}
     <p>
         Member since {{ moment(user.member_since).format('L') }}.
+    </p>
+    <p>
         Last seen {{ moment(user.last_seen).fromNow() }}.
     </p>
+    {% if current_user.is_administrator() %}
+    <a class="btn btn-danger"
+        href="{{url_for('main.edit_profile_admin',id=user.id)}}">Edit Profile [Admin]</a>
+    {% endif %}
 </div>
 {% endblock %}

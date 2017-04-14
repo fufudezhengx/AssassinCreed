@@ -3,9 +3,10 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import UserMixin,AnonymousUserMixin
 from . import login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flask import current_app
+from flask import current_app,url_for
 from . import config
 import datetime
+import random
 
 class Permission:
     FOLLOW = 0x01
@@ -21,9 +22,6 @@ class Role(db.Model):
     default = db.Column(db.Boolean, default = False, index = True)
     permissions = db.Column(db.Integer)
     users = db.relationship('User',backref='role',lazy='dynamic')
-    
-    
-
     
     @staticmethod
     def insert_roles(): 
@@ -50,8 +48,6 @@ class Role(db.Model):
     def __repr__(self):
         return '<Role %r>' %self.name
 
-
-        
 class User(db.Model,UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -66,6 +62,10 @@ class User(db.Model,UserMixin):
     about_me = db.Column(db.Text())
     member_since = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
     last_seen = db.Column(db.DateTime(),default=datetime.datetime.utcnow)
+
+    avatar = '/static/avatar/'+str(random.randint(1,8)) + 'avatar.jpg'
+    
+
 
     def ping(self):
         self.last_seen = datetime.datetime.utcnow()
