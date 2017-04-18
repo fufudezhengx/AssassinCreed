@@ -1,0 +1,18 @@
+<ul class="posts list-unstyled" >
+
+    <hr />
+    {% for post in posts %}
+    <li class="post" style="background-color:#ffffff">
+        <div class="row">
+            <div class="col-md-1 profile-thumbnail text-center">
+                <a href="{{ url_for('main.user_profile',username=post.author.username)}}"><img class="img-rounded profile-thumbnail" src="{{post.author.avatar}}" width="50px" height="50px">{{ post.author.username }}</a>
+            </div>
+            <div class="col-md-10 text-left  post-body">{{ post.body }}</div>
+            <div class="col-md-1 text-muted post-date">
+                {{ moment(post.timestamp).fromNow() }}
+            </div>
+        </div>
+    </li>
+    <hr />
+    {% endfor %}
+</ul>

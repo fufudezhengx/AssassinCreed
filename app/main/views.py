@@ -1,30 +1,25 @@
 from datetime import datetime
 from flask import render_template, session, redirect, url_for, abort, flash
 from . import main
-from .forms import NameForm,EditProfileForm,EditProfileAdminForm
+from .forms import PostForm,EditProfileForm,EditProfileAdminForm
 from .. import db
-from ..models import Role, User, Permission
+from ..models import Role, User, Post,Permission
 from ..decorators import admin_required, permission_required
 from flask_login import login_required,current_user
 
 @main.route('/',methods=['GET','POST'])
 def index():
-    form = NameForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.name.data).first()
-        if user is None:
-            user = User(username = form.name.data)
-            db.session.add(user)
-            session['know'] = False
-            if app.config['FLASK_ADMIN']:
-                send_email(app.config['FLASKY_ADMIN'],'New User','mail/new_user',user=user)
-        else:
-            session['know'] = True
-        session['name'] = form.name.data
-        form.name.data = ''
+    form = PostForm()
+    if current_user.can(Permission.WRITE_ARTICLES) and \
+       form.validate_on_submit():
+        post = Post(body=form.body.data,author=current_user._get_current_object())
+        db.session.add(post)
+        db.session.commit()
+        flash('You have submit the post')
         return redirect(url_for('main.index'))
-    return render_template('index.html',current_time=datetime.utcnow(),
-                            name=session.get('name'),form=form,know=session.get('know',False))      
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template('index.html',form=form,posts=posts,current_time=datetime.utcnow())
+
 
 @main.route('/admin')
 @login_required
@@ -37,7 +32,8 @@ def user_profile(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         abort(404)
-    return render_template('user_profile.html',user=user)
+    posts = user.posts.order_by(Post.timestamp.desc()).all()
+    return render_template('user_profile.html',user=user,posts=posts)
 
 @main.route('/edit_profile',methods=['GET','POST'])
 @login_required

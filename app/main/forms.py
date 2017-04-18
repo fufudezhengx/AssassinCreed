@@ -3,10 +3,6 @@ from wtforms import StringField, BooleanField, SubmitField,TextAreaField,SelectF
 from wtforms.validators import Required,Length,Email,Regexp
 from ..models import Role
 
-class NameForm(FlaskForm):
-    name = StringField('What is your name?',validators = [Required()])
-    submit = SubmitField('Submit')
-
 class EditProfileForm(FlaskForm):
 	name = StringField('Real name',validators = [Length(0,64)])
 	location = StringField('Your home',validators = [Length(0,64)])
@@ -38,3 +34,8 @@ class EditProfileAdminForm(FlaskForm):
 		if field.data != self.user.username and \
 		   User.query.filter_by(username=field.data).first():
 			raise ValidationError('Username already in use.')
+
+class PostForm(FlaskForm):
+	body = TextAreaField(
+		"Write anything you want to talk about Assassin Creed",validators=[Required()])
+	submit = SubmitField('Submit')
