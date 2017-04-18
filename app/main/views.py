@@ -1,11 +1,12 @@
 from datetime import datetime
-from flask import render_template, session, redirect, url_for, abort, flash
+from flask import render_template, session, redirect, url_for, abort, flash,request,current_app
 from . import main
 from .forms import PostForm,EditProfileForm,EditProfileAdminForm
 from .. import db
 from ..models import Role, User, Post,Permission
 from ..decorators import admin_required, permission_required
 from flask_login import login_required,current_user
+
 
 @main.route('/',methods=['GET','POST'])
 def index():
@@ -17,8 +18,11 @@ def index():
         db.session.commit()
         flash('You have submit the post')
         return redirect(url_for('main.index'))
-    posts = Post.query.order_by(Post.timestamp.desc()).all()
-    return render_template('index.html',form=form,posts=posts,current_time=datetime.utcnow())
+    page = request.args.get('page',1,type=int)
+    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
+            page, per_page=current_app.config['AS_POSTS_PER_PAGE'],error_out=False)
+    posts = pagination.items
+    return render_template('index.html',form=form,posts=posts,pagination=pagination,current_time=datetime.utcnow())
 
 
 @main.route('/admin')
@@ -32,8 +36,11 @@ def user_profile(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         abort(404)
-    posts = user.posts.order_by(Post.timestamp.desc()).all()
-    return render_template('user_profile.html',user=user,posts=posts)
+    page = request.args.get('page', 1, type=int)
+    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(page, 
+        per_page=current_app.config['AS_POSTS_PER_PAGE'],error_out=False)
+    posts = pagination.items
+    return render_template('user_profile.html',user=user,posts=posts,pagination=pagination)
 
 @main.route('/edit_profile',methods=['GET','POST'])
 @login_required

@@ -7,6 +7,7 @@ class Config:
     AS_MAIL_SUBJECT_PREFIX = '[AS]'
     AS_MAIL_SENDER = 'AS Admin <assassin@example.com>'
     AS_ADMIN = os.environ.get('AS_ADMIN') or 'as@as.com'
+    AS_POSTS_PER_PAGE = 20
 
     @staticmethod
     def init_app(app):
