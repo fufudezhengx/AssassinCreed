@@ -87,3 +87,8 @@ def edit_profile_admin(id):
         flash('You have been updated the user profile')
         return redirect(url_for('main.user_profile',username=user.username))
     return render_template('edit_profile_admin.html',form=form,user=user)
+
+@main.route('/posts/<int:id>')
+def post(id):
+    post = Post.query.get_or_404(id)
+    return render_template('post.html',posts=[post])

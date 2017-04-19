@@ -17,7 +17,12 @@
             </div>
             <div class="col-md-1 text-muted post-date">
                 {{ moment(post.timestamp).fromNow() }}
+                <div class="post-footer">
+                    <a href="{{ url_for('main.post',id=post.id) }}">
+                        <span class="label label-default">Link</span></a>
+                </div>
             </div>
+
     </li>
     <hr />
     {% endfor %}
