@@ -8,18 +8,27 @@
                     <img class="img-rounded profile-thumbnail" width="50px" height="50px" src="{{ post.author.avatar }}">{{ post.author.username }}
                 </a>
             </div>
-            <div class="col-md-10 text-left  post-body">
+            <div class="col-md-9 text-left  post-body">
             {% if post.body_html %}
                 {{ post.body_html | safe }}
             {% else %}
                 {{ post.body }}
             {% endif %}
             </div>
-            <div class="col-md-1 text-muted post-date">
+            <div class="col-md-2 text-center text-muted post-date">
                 {{ moment(post.timestamp).fromNow() }}
                 <div class="post-footer">
                     <a href="{{ url_for('main.post',id=post.id) }}">
                         <span class="label label-default">Link</span></a>
+                {% if current_user == post.author %}
+                    <a href="{{ url_for('main.edit_post', id=post.id) }}">
+                        <span class="label label-primary">Edit</span>
+                    </a>
+                {% elif current_user.is_administrator() %}
+                    <a href="{{ url_for('.edit', id=post.id) }}">
+                        <span class="label label-danger">Edit [Admin]</span>
+                    </a>
+                {% endif %}
                 </div>
             </div>
 

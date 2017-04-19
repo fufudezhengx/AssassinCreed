@@ -8,6 +8,7 @@ from ..decorators import admin_required, permission_required
 from flask_login import login_required,current_user
 
 
+
 @main.route('/',methods=['GET','POST'])
 def index():
     form = PostForm()
@@ -92,3 +93,22 @@ def edit_profile_admin(id):
 def post(id):
     post = Post.query.get_or_404(id)
     return render_template('post.html',posts=[post])
+
+@main.route('/edit_post/<int:id>',methods=['GET', 'POST'])
+@login_required
+def edit_post(id):
+    post = Post.query.get_or_404(id)
+    form = PostForm()
+    if current_user != post.author and \
+      not current_user.can(Permission.ADMINISTER):
+        abort(403)
+    if form.validate_on_submit():
+        post.body = form.body.data
+        db.session.add(post)
+        db.session.commit()
+        flash('You have been update the post')
+        return redirect(url_for('main.post',id=id))
+    form.body.data = post.body
+    return render_template('edit_post.html',form=form)
+    
+
