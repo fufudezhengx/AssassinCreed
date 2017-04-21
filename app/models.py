@@ -10,6 +10,7 @@ import random
 from markdown import markdown
 import bleach
 
+
 class Permission:
     FOLLOW = 0x01
     COMMIT = 0x02
@@ -50,6 +51,14 @@ class Role(db.Model):
     def __repr__(self):
         return '<Role %r>' %self.name
 
+class Follow(db.Model):
+    __tablename__ = 'follows'
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'),
+                            primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'),
+                            primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
 class User(db.Model,UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -66,10 +75,25 @@ class User(db.Model,UserMixin):
     member_since = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
     last_seen = db.Column(db.DateTime(),default=datetime.datetime.utcnow)
 
-    avatar = '/static/avatar/'+str(random.randint(1,8)) + 'avatar.jpg'
-    
+    followed = db.relationship('Follow',
+                               foreign_keys=[Follow.follower_id],
+                               backref=db.backref('follower', lazy='joined'),
+                               lazy='dynamic',
+                               cascade='all, delete-orphan')
+    followers = db.relationship('Follow',
+                                foreign_keys=[Follow.followed_id],
+                                backref=db.backref('followed', lazy='joined'),
+                                lazy='dynamic',
+                                cascade='all, delete-orphan')
 
+    @property
+    def followed_posts(self):
+        return Post.query.join(Follow,Follow.followed_id == Post.author_id)\
+            .filter(Follow.follower_id == self.id)
 
+    def avatar(self):
+        return '/static/avatar/'+ str(self.id % 10) + 'avatar.jpg'
+         
     def ping(self):
         self.last_seen = datetime.datetime.utcnow()
         db.session.add(self)
@@ -134,6 +158,22 @@ class User(db.Model,UserMixin):
             
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
+
+    def follow(self, user):
+        if not self.is_following(user):
+            f = Follow(followed=user)
+            self.followed.append(f)
+
+    def unfollow(self, user):
+        f = self.followed.filter_by(followed_id=user.id).first()
+        if f:
+            self.followed.remove(f)
+
+    def is_following(self, user):
+        return self.followed.filter_by(followed_id=user.id).first() is not None
+
+    def is_followed_by(self, user):
+        return self.followers.filter_by(follower_id=user.id).first() is not None
       
     def __repr__(self):
         return '<User %r>' % self.username
