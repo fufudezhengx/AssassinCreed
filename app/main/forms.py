@@ -40,3 +40,9 @@ class PostForm(FlaskForm):
 	body = PageDownField(
 		"Write anything you want to talk about Assassin Creed",validators=[Required()])
 	submit = SubmitField('Submit')
+
+class CommentForm(FlaskForm):
+	body = StringField('Write anything you want to talk about the post',validators=[Required()])
+	submit = SubmitField('Submit')
+	
+		

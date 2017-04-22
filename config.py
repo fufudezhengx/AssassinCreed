@@ -9,6 +9,8 @@ class Config:
     AS_ADMIN = os.environ.get('AS_ADMIN') or 'as@as.com'
     AS_POSTS_PER_PAGE = 20
     AS_FOLLOWERS_PER_PAGE =10
+    AS_COMMENTS_PER_PAGE = 3
+    AS_MODERATE_COMMENTS_PER_PAGE = 10
 
     @staticmethod
     def init_app(app):

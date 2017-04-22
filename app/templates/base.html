@@ -94,6 +94,9 @@ type="image/x-icon">
                     {% else %}
                     <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
                     {% endif %}
+                    {% if current_user.can(Permission.MODERATE_COMMENTS) %}
+                    <a href="{{url_for('main.moderate')}}">Moderate</a>
+                    {% endif %}
                 </ul>
             </div>     
         </div>

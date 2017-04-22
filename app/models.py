@@ -13,7 +13,7 @@ import bleach
 
 class Permission:
     FOLLOW = 0x01
-    COMMIT = 0x02
+    COMMENT = 0x02
     WRITE_ARTICLES = 0x04
     MODERATE_COMMENTS = 0x08
     ADMINISTER = 0x80
@@ -68,6 +68,7 @@ class User(db.Model,UserMixin):
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean,default=False)
     posts = db.relationship('Post',backref='author',lazy='dynamic')
+    comments = db.relationship('Comment',backref='author',lazy='dynamic')
     
     name = db.Column(db.String(64))
     location = db.Column(db.String(64))
@@ -90,6 +91,14 @@ class User(db.Model,UserMixin):
     def followed_posts(self):
         return Post.query.join(Follow,Follow.followed_id == Post.author_id)\
             .filter(Follow.follower_id == self.id)
+
+    @staticmethod
+    def add_self_follows():
+        for user in User.query.all():
+            if not user.is_following(user):
+                user.follow(user)
+                db.session.add(user)
+                db.session.commit()
 
     def avatar(self):
         return '/static/avatar/'+ str(self.id % 10) + 'avatar.jpg'
@@ -206,13 +215,16 @@ class AnonymousUser(AnonymousUserMixin):
     def is_administrator(self):
         return False
 
+login_manager.anonymous_user = AnonymousUser
+
 class Post(db.Model):
     __tablename__ = "posts"
     id = db.Column(db.Integer,primary_key=True)
     body = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime,index=True,default=datetime.datetime.utcnow())
+    timestamp = db.Column(db.DateTime,index=True,default=datetime.datetime.utcnow)
     author_id = db.Column(db.Integer,db.ForeignKey('users.id'))
     body_html = db.Column(db.Text)
+    comments = db.relationship('Comment',backref='post',lazy='dynamic')
 
     @staticmethod
     def generate_fake(count=100):
@@ -239,8 +251,26 @@ class Post(db.Model):
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
         
-login_manager.anonymous_user = AnonymousUser
-       
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer,primary_key=True)
+    body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime,index=True,default=datetime.datetime.utcnow)
+    disabled = db.Column(db.Boolean)
+    author_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer,db.ForeignKey('posts.id'))
+
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p']
+        target.body_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+        
+db.event.listen(Comment.body, 'set', Comment.on_changed_body)
         
 @login_manager.user_loader
 def load_user(user_id):
