@@ -2,7 +2,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'I_like_play_Assassin_Creed!'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     AS_MAIL_SUBJECT_PREFIX = '[AS]'
     AS_MAIL_SENDER = 'AS Admin <assassin@example.com>'
@@ -11,6 +11,7 @@ class Config:
     AS_FOLLOWERS_PER_PAGE =10
     AS_COMMENTS_PER_PAGE = 3
     AS_MODERATE_COMMENTS_PER_PAGE = 10
+    AS_POSTS_PER_PAGE = 20
 
     @staticmethod
     def init_app(app):
