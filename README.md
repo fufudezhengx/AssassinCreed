@@ -3,7 +3,7 @@ A blog where we can discuss Assassin Creed.
 
 - 该社交博客是根据《Flask Web开发：基于Python的Web应用开发实战》自学开发的，基本实现了用户注册，登陆，修改资料，关注用户，发表博客，添加评论等功能。
 
-- 自学过程中我掌握如何使用 Git 管理开发进度，使用 Markdown 编写博客，记录开发过程，同时将博客托管到 Github(https://fufudezhengx.github.io/Jack_blog/)。
+- 自学过程中我掌握如何使用 Git 管理开发进度，使用 Markdown 编写博客，记录开发过程，同时将博客托管到 [Github](https://fufudezhengx.github.io/Jack_blog/)
 
 - 这一切都让我感觉原来学习竟然可以如此美妙，看着自己网站一点点成型，如同亲手培育了新的生命，这极大的增强了我的自信。
 
